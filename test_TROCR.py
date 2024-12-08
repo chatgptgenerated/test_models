@@ -59,13 +59,20 @@ def process_pdf(pdf_path, output_dir):
 
 
 # Example usage
-
-pdf_file = "legi4.pdf"
 output_directory = "output"
-try:
-    process_pdf(pdf_file, output_directory)
-except Exception as e:
-    pass
+# pdf_file = "legi4.pdf"
+#
+# try:
+#     process_pdf(pdf_file, output_directory)
+# except Exception as e:
+#     pass
+
+
+image = Image.open("eu.jpeg")
+
+
+split_image_by_text_rows(image, output_directory)
+
 mean_length = 10
 mesajfinal = ""
 if len(mesajfinal) != 0:

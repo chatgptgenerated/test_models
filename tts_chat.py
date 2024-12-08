@@ -3,10 +3,7 @@ import speech_recognition as sr
 from datasets import load_dataset
 import soundfile as sf
 import torch
-import time #todo de scos
 from deep_translator import GoogleTranslator
-
-start = time.time()
 
 userLanguage = "en"
 
@@ -16,7 +13,6 @@ embeddings_dataset = load_dataset("Matthijs/cmu-arctic-xvectors", split="validat
 speaker_embedding = torch.tensor(embeddings_dataset[7306]["xvector"]).unsqueeze(0)
 recognizer = sr.Recognizer()
 
-print(f'setup time: {time.time() - start}')
 
 # record 5 sec
 question = ""
