@@ -5,8 +5,11 @@ from PIL import Image
 import pytesseract
 import os
 import io
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+cors = CORS(app) # allow CORS for all domains on all routes.
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Initialize the processor and model
 processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
@@ -94,4 +97,4 @@ def process_image_endpoint():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='127.0.0.1',port=5000)

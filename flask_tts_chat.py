@@ -4,10 +4,14 @@ import speech_recognition as sr
 from datasets import load_dataset
 import soundfile as sf
 import torch
+from flask_cors import CORS, cross_origin
 from deep_translator import GoogleTranslator
 import io
 
 app = Flask(__name__)
+cors = CORS(app) # allow CORS for all domains on all routes.
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 userLanguage = "en"
 
@@ -53,6 +57,30 @@ Cells in the body come in a variety of sizes, shapes, and types. It incorporates
 
     return send_file(audio_io, mimetype="audio/wav", as_attachment=True, download_name="response.wav")
 
+@app.route("/read_text", methods=["POST"])
+def read_text():
+    # Get the question from the request
+    question = request.json["question"]
+    print(question)
+
+    if not question:
+        return jsonify({"error": "No question provided"}), 400
+
+    print(f"Received question: {question}")
+
+    answer_user_language = GoogleTranslator(source='en', target=userLanguage).translate(question)
+
+    # Generate speech
+    speech = synthesiser(answer_user_language,
+                         forward_params={"speaker_embeddings": speaker_embedding, "language": userLanguage})
+
+    # Save the speech as a WAV file in memory
+    audio_io = io.BytesIO()
+    sf.write(audio_io, speech["audio"], samplerate=speech["sampling_rate"], format="wav")
+    audio_io.seek(0)
+
+    return send_file(audio_io, mimetype="audio/wav", as_attachment=True, download_name="response.wav")
+
 
 @app.route("/record_speech", methods=["POST"])
 def record_speech():
@@ -74,4 +102,4 @@ def record_speech():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='127.0.0.1',port=5001)
