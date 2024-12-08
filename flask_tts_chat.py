@@ -22,7 +22,8 @@ recognizer = sr.Recognizer()
 @app.route("/ask_question", methods=["POST"])
 def ask_question():
     # Get the question from the request
-    question = request.json.get("question")
+    question = request.json["question"]
+    print(question)
 
     if not question:
         return jsonify({"error": "No question provided"}), 400
@@ -47,7 +48,7 @@ Cells in the body come in a variety of sizes, shapes, and types. It incorporates
 
     # Save the speech as a WAV file in memory
     audio_io = io.BytesIO()
-    sf.write(audio_io, speech["audio"], samplerate=speech["sampling_rate"])
+    sf.write(audio_io, speech["audio"], samplerate=speech["sampling_rate"], format="wav")
     audio_io.seek(0)
 
     return send_file(audio_io, mimetype="audio/wav", as_attachment=True, download_name="response.wav")

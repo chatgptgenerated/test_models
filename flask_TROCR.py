@@ -56,9 +56,7 @@ def process_pdf(pdf_path, output_dir):
 @app.route("/process_pdf", methods=["POST"])
 def process_pdf_endpoint():
     # Expect a file in the request
-    pdf_file = request.files.get("pdf")
-    if not pdf_file:
-        return jsonify({"error": "No PDF file provided"}), 400
+    pdf_file = request.files["pdf"]
 
     output_directory = "output"
     pdf_path = os.path.join(output_directory, pdf_file.filename)
@@ -74,16 +72,23 @@ def process_pdf_endpoint():
 
 
 @app.route("/process_image", methods=["POST"])
-def process_image_endpoint(img_path):
+def process_image_endpoint():
     print("merge?")
-    # Expect an image file in the request
-    image_file = request.files.get("image")
-    if not image_file:
-        return jsonify({"error": "No image file provided"}), 400
 
-    image = Image.open(image_file)
+    # data = request.get_json()
+    # if not data or 'img_path' not in data:
+    #     return jsonify({"error": "img_path is required in the JSON body"}), 400
+
+    # img_path = data['img_path']
+
+    f = request.files['image']
+    print(f)
+    img = Image.open(f)
+    print(img.size)
+
+    #image = Image.open(img_path)
     output_directory = "output"
-    extracted_text = split_image_by_text_rows(image, output_directory)
+    extracted_text = split_image_by_text_rows(img, output_directory)
     print("merge?")
     return jsonify({"extracted_text": extracted_text})
 
